@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>學生議會 表決網</title>
+    </head>
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .title {
+            font-size: 40px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .content {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .setting {
+            border-right: 2px black solid;
+            padding: 10px;
+        }
+
+        .council {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .button {
+            border-radius: 10px;
+            font-size: 30px;
+            background-color: gray;
+            color: white;
+            padding: 10px;
+        }
+
+        .button:hover {
+            opacity: 75%;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px;
+            height: calc(100vh/6 - 30px);
+        }
+
+        .box {
+            padding: 5px;
+            height: 100%;
+            background-color: lightblue;
+            margin: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="title">學生議會 表決網</div>
+    <div class="content">
+        <div class="setting">
+            <span id="agreeButton" class="button">同意</span>
+            <span id="reset" class="button">全部重設</span>
+            <span id="copyButton" class="button">複製結果</span>
+            <hr/>
+            <div id="attend">出席人數：</div>
+            <div id="agree">贊成票數：</div>
+            <div id="disagree">反對票數：</div>
+        </div>
+        <div class="council">
+            <div class="container" id="seven"></div>
+            <div class="container" id="eight"></div>
+            <div class="container" id="nine"></div>
+            <div class="container" id="ten"></div>
+            <div class="container" id="eleven"></div>
+            <div class="container" id="twelve"></div>
+        </div>
+    </div>
+</body>
+
+<script>
+    qsAll = (selector) => document.querySelectorAll(selector);
+    id = (id) => document.getElementById(id);
+    getBgColor = (element) => element.style.backgroundColor;
+    setBgColor = (element, color) => element.style.backgroundColor = color;
+
+    councilors = {
+        seven: [
+            {
+                class: "",
+                name: ""
+            },
+            {
+                class: "",
+                name: ""
+            },
+        ],
+        eight: [
+            
+        ],
+        nine: [
+           
+        ],
+        ten: [
+            {
+                class: "",
+                name: ""
+            },
+            {
+                class: "",
+                name: ""
+            },
+            {
+                class: "",
+                name: ""
+            },
+            {
+                class: "",
+                name: ""
+            },
+            {
+                class: "",
+                name: ""
+            },
+            {
+                class: "",
+                name: ""
+            },
+            {
+                class: "",
+                name: ""
+            },
+            {
+                class: "",
+                name: ""
+            },
+            {
+                class: "",
+                name: ""
+            },
+        ],
+        eleven: [
+        ],
+        twelve: []
+    };
+
+    containers = qsAll(".container");
+
+    agreeButton = id("agreeButton");
+    flipAgree(agreeButton);
+    agreeButton.onclick = flipAgree.bind(undefined, agreeButton);
+
+    reset = id("reset");
+    reset.onclick = () => { qsAll(".box").forEach(e => { setBgColor(e, ""); }); };
+
+    copyButton = id("copyButton");
+    copyButton.onclick = copy;
+
+    containers.forEach(container => {
+        councilors[container.id].forEach(councilor => {
+            element = document.createElement("div");
+            element.classList.add("box");
+            element.id = councilor.name;
+            element.onclick = vote;
+            element.innerHTML = `${councilor.class} ${councilor.name}`;
+            element.style.opacity = "50%";
+            checkBox = document.createElement("input");
+            checkBox.type = "checkbox";
+            checkBox.onclick = check;
+            element.appendChild(checkBox);
+            container.appendChild(element);
+        });
+    });
+
+    function flipAgree(agreeButton) {
+        if (getBgColor(agreeButton) == "green") {
+            agreeButton.innerHTML = "不同意";
+            setBgColor(agreeButton, "red");
+        } else {
+            agreeButton.innerHTML = "同意";
+            setBgColor(agreeButton, "green");
+        }
+    }
+
+    function vote() {
+        let agreeButton = id("agreeButton");
+        let color = getBgColor(agreeButton);
+        let element = event.target;
+
+        if (getBgColor(element) == color) setBgColor(element, "");
+        else setBgColor(element, color);
+
+        let result = count();
+        id("attend").innerHTML = `出席人數：${result.agree.length + result.disagree.length + result.abstain.length}`;
+        id("agree").innerHTML = `贊成票數：${result.agree.length}`;
+        id("disagree").innerHTML = `反對票數：${result.disagree.length}`;
+    }
+
+    function check() {
+        let checkBox = event.target;
+        let element = checkBox.closest(".box");
+
+        if (checkBox.checked) element.style.opacity = "100%";
+        else element.style.opacity = "50%";
+    }
+
+    function count() {
+        let agreeList = [];
+        let disagreeList = [];
+        let abstainList = [];
+        qsAll(".box").forEach(e => {
+            if (e.querySelector("input").checked) {
+                if (getBgColor(e) == "green") agreeList.push(e.id);
+                if (getBgColor(e) == "red") disagreeList.push(e.id);
+                if (getBgColor(e) == "") abstainList.push(e.id);
+            }
+        });
+
+        return {agree: agreeList, disagree: disagreeList, abstain: abstainList};
+    }
+
+    function copy() {
+        let result = count();
+        let data = `贊成者：${result.agree.join("、")}
+反對者：${result.disagree.join("、")}
+棄權者：${result.abstain.join("、")}`;
+        navigator.clipboard.writeText(data);
+    }
+</script>
+
+</html>
