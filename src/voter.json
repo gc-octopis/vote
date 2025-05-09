@@ -1,0 +1,24 @@
+{
+    "group1":
+    [
+        {
+            "class": "C01",
+            "name": "Hello"
+        },
+        {
+            "class": "C02",
+            "name": "World"
+        }
+    ],
+    "group2":
+    [
+        {
+            "class": "X01",
+            "name": "Alex"
+        },
+        {
+            "class": "X01",
+            "name": "Jason"
+        }
+    ]
+}
