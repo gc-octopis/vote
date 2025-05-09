@@ -30,9 +30,9 @@ originally made for student council's meeting vote system, but works for registe
 ```
 
 **Note:**  
-* each group form a row in webpage.
+* each group forms a row in webpage.
 * you can have infinite rows by copying the structure and add `,` in the middle, but too many groups may cause visual bug.
-* `class` attribute can leave black as `""`.
+* `class` attribute can leave blank as `""`.
 * `class` will be displayed before `name`, but won't be copied into result.
 * you can have infinite voters in one group by copying the structure and add `,` in the middle, but too many voters may cause visual bug.
 
